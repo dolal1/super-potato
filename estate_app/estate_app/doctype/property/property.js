@@ -7,7 +7,6 @@ frappe.ui.form.on("Property", {
     // TODO: check amenities for duplicate entries
     form.check_duplicate_amenities = function (form, row) {
       form.doc.amenities.forEach((item) => {
-        console.log(item.amenity_name);
         if (row.amenity_name == "" || row.idx == item.idx) {
           // pass
         } else {
@@ -35,6 +34,35 @@ frappe.ui.form.on("Property", {
 
         form.refresh_field("amenity_name");
       }
+    };
+
+    // calculate grand total
+    form.calculate_grand_total = (form) => {
+      let total = 0;
+
+      // loop through child table
+      form.doc.amenities.forEach((d) => {
+        total = total + d.amenity_price;
+      });
+
+      // get grand total
+      let grand_total = form.doc.property_price + total;
+
+      let discount = form.doc.discount;
+      if (discount) {
+        grand_total = grand_total - grand_total * (discount / 100);
+      }
+
+      // set grand total
+      form.set_value("grand_total", grand_total);
+    };
+
+    // Share Discount value
+    form.share_discount = (form) => {
+      form.doc.amenities.forEach((d) => {
+        d.discount = form.doc.discount;
+      });
+      form.refresh_field("amenities");
     };
   },
 
@@ -67,9 +95,7 @@ frappe.ui.form.on("Property", {
             "estate_app.estate_app.doctype.property.api.check_property_types",
           args: { property_type: property_type },
           callback: function (r) {
-            // code snippet
-            console.log(r);
-
+            // Get the return value and print a message
             let data = r.message;
             if (data.length > 0) {
               let head = `<h3>Properties of type ${property_type}</h3>`;
@@ -90,15 +116,31 @@ frappe.ui.form.on("Property", {
       "Actions"
     );
   },
+
+  property_price: (form) => {
+    form.calculate_grand_total(form);
+  },
+
+  discount: (form) => {
+    form.share_discount(form);
+    form.calculate_grand_total(form);
+  },
 });
 
+// Amenities Child table Actions
 frappe.ui.form.on("Property Amenity Detail", {
   amenity_name: function (form, childDocType, childDocName) {
     // Get an entire record
     let row = locals[childDocType][childDocName];
 
+    // perform checks
     form.check_outdoor_kitchen_in_flat(form, row);
 
     form.check_duplicate_amenities(form, row);
+
+    form.calculate_grand_total(form);
+  },
+  amenities_remove: function (form, childDocType, childDocName) {
+    form.calculate_grand_total(form);
   },
 });

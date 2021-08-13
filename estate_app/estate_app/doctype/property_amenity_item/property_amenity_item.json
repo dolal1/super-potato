@@ -6,19 +6,31 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "amenity"
+  "amenity",
+  "amenity_price"
  ],
  "fields": [
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "amenity",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Amenity",
+   "reqd": 1,
    "unique": 1
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "amenity_price",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amenity Price",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-07-16 23:43:24.118879",
+ "modified": "2021-08-13 12:08:33.992855",
  "modified_by": "Administrator",
  "module": "Estate App",
  "name": "Property Amenity Item",
