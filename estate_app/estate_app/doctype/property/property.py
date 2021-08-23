@@ -11,10 +11,14 @@ class Property(Document):
 
     # validate with ODM
     def validate(self):
-        if (self.property_type=='Flat'):
-            for amenity in self.amenities:
-                if (amenity.amenity_name=='Out Door Kitchen'):
-                    frappe.throw((f'<b>Flats</b> should not have amenity <b>{amenity.amenity_name}</b>'))
+        try:
+            if (self.property_type=='Flat'):
+                for amenity in self.amenities:
+                    if (amenity.amenity_name=='Out Door Kitchen'):
+                        frappe.throw((f'<b>Flats</b> should not have amenity <b>{amenity.amenity_name}</b>'))
+        except Exception as e:
+            error = frappe.log_error(frappe.get_traceback(), f'{e}')
+            frappe.msgprint((f"Error occured. Please See <a href='/desk#Form/Error Log/{error.name}'><b>{error.title}</b></a>"))
 
     # # validate with SQL
     #  def validate(self):
