@@ -1,6 +1,6 @@
 ## Estate App
 
-Its an estate App
+An Estate Management module in ERP-Next Created as a Custom App
 
 #### License
 
